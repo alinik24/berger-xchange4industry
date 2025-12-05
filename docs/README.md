@@ -8,21 +8,12 @@ It leverages the **International Data Spaces (IDS)** and **Gaia-X** principles t
 ## Architecture
 The system consists of a centralized Digital Twin Database (FastAPI) and a Unified Dashboard (Streamlit) for both the Provider (Berger) and Consumer (Customer).
 
-```mermaid
-graph TD
-    subgraph "Werkzeugbau Berger (Provider)"
-        A[Streamlit Dashboard (View A)] -->|Manage Assets| B(FastAPI Backend)
-        B -->|Read| D[(Data Folder / JSON)]
-        B -->|Connects to| E[Provider EDC]
-    end
-    
-    subgraph "Customer Stripmeier (Consumer)"
-        F[Streamlit Dashboard (View B)] -->|Request Access| G[Consumer EDC]
-    end
-    
-    E <-->|IDS Protocol (Contract Negotiation)| G
-    G -->|Proxy Data| B
-```
+**Version: 1**
+<img width="1408" height="768" alt="Image_zemsz0zemsz0zems" src="https://github.com/user-attachments/assets/4ef9fd49-2a57-4f5c-aa21-bc983d87646d" />
+
+**Version: 2 - High Level**
+<img width="2784" height="1536" alt="Image_gba35ugba35ugba3 (1)" src="https://github.com/user-attachments/assets/1d8738bd-8c91-4d68-b5b8-3590b24c50a4" />
+
 
 ## Folder Structure
 - `/backend`: FastAPI application serving the Digital Twin data.
