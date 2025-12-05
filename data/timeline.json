@@ -1,0 +1,36 @@
+{
+    "tool_id": "2201",
+    "milestones": [
+        {
+            "phase": "Design",
+            "status": "Completed",
+            "date": "2023-11-01",
+            "responsible": "Eng. Weber"
+        },
+        {
+            "phase": "Material Sourcing",
+            "status": "Completed",
+            "date": "2023-11-15",
+            "responsible": "Procurement"
+        },
+        {
+            "phase": "Machining (CNC)",
+            "status": "In Progress",
+            "progress_percent": 75,
+            "estimated_completion": "2023-12-10",
+            "responsible": "Prod. Unit 3"
+        },
+        {
+            "phase": "Quality Control",
+            "status": "Pending",
+            "estimated_start": "2023-12-11",
+            "responsible": "QM Team"
+        },
+        {
+            "phase": "Delivery",
+            "status": "Pending",
+            "estimated_date": "2023-12-20",
+            "responsible": "Logistics"
+        }
+    ]
+}

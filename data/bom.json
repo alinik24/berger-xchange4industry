@@ -1,0 +1,29 @@
+{
+  "tool_id": "2201",
+  "tool_name": "Visitenkarten ETUI",
+  "components": [
+    {
+      "part_id": "P-101",
+      "name": "Steel Base Plate",
+      "material": "1.2379 Steel",
+      "quantity": 1,
+      "supplier": "ThyssenKrupp"
+    },
+    {
+      "part_id": "P-102",
+      "name": "Injection Nozzle",
+      "material": "Copper Alloy",
+      "quantity": 4,
+      "supplier": "Hasco"
+    },
+    {
+      "part_id": "P-103",
+      "name": "Ejector Pin",
+      "material": "HSS",
+      "quantity": 12,
+      "supplier": "Meusburger"
+    }
+  ],
+  "total_weight_kg": 45.5,
+  "created_at": "2023-10-15"
+}

@@ -1,0 +1,2 @@
+CREATE DATABASE provider;
+CREATE DATABASE consumer;

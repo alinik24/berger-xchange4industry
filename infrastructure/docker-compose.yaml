@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # --- APPLICATION LAYER ---
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: berger_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../data:/app/data
+      - ../example_data:/app/example_data
+    environment:
+      - DATA_DIR=/app/data
+      - EXAMPLE_DATA_DIR=/app/example_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ids_network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: berger_frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    volumes:
+      - ../frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - ids_network
+
+  # --- INFRASTRUCTURE LAYER ---
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ids_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - ids_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- GAIA-X TRUST FRAMEWORK ---
+
+  trust-service:
+    build:
+      context: ../trust-service
+      dockerfile: Dockerfile
+    container_name: gaia_x_trust_service
+    ports:
+      - "8081:8000"
+    networks:
+      - ids_network
+
+  # --- IDS INFRASTRUCTURE (SOVITY CE) ---
+
+  provider-edc:
+    image: ghcr.io/sovity/edc-ce:latest
+    container_name: provider_edc
+    ports:
+      - "8181:11001" # Management API
+      - "8282:11002" # Protocol API
+      - "8383:11003" # Default/Public API
+    environment:
+      - EDC_PARTICIPANT_ID=provider
+      - EDC_COMPONENT_ID=provider
+      - EDC_API_AUTH_KEY=password
+      - EDC_FLYWAY_ENABLED=true
+      - SOVITY_DEPLOYMENT_KIND=control-plane-with-integrated-data-plane
+      - SOVITY_DATASPACE_KIND=sovity-mock-iam
+      - SOVITY_EDC_FQDN_PUBLIC=provider-edc
+      - SOVITY_FIRST_PORT=11001
+      - SOVITY_JDBC_URL=jdbc:postgresql://postgres:5432/provider
+      - SOVITY_JDBC_USER=postgres
+      - SOVITY_JDBC_PASSWORD=password
+      - SOVITY_MANAGEMENT_API_IAM_KIND=management-iam-api-key
+      - SOVITY_MANAGEMENT_API_IAM_API_KEY=password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ids_network
+
+  consumer-edc:
+    image: ghcr.io/sovity/edc-ce:latest
+    container_name: consumer_edc
+    ports:
+      - "9181:11001" # Management API
+      - "9282:11002" # Protocol API
+      - "9383:11003" # Default/Public API
+    environment:
+      - EDC_PARTICIPANT_ID=consumer
+      - EDC_COMPONENT_ID=consumer
+      - EDC_API_AUTH_KEY=password
+      - EDC_FLYWAY_ENABLED=true
+      - SOVITY_DEPLOYMENT_KIND=control-plane-with-integrated-data-plane
+      - SOVITY_DATASPACE_KIND=sovity-mock-iam
+      - SOVITY_EDC_FQDN_PUBLIC=consumer-edc
+      - SOVITY_FIRST_PORT=11001
+      - SOVITY_JDBC_URL=jdbc:postgresql://postgres:5432/consumer
+      - SOVITY_JDBC_USER=postgres
+      - SOVITY_JDBC_PASSWORD=password
+      - SOVITY_MANAGEMENT_API_IAM_KIND=management-iam-api-key
+      - SOVITY_MANAGEMENT_API_IAM_API_KEY=password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ids_network
+
+networks:
+  ids_network:
+    driver: bridge
